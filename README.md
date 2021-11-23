@@ -12,7 +12,6 @@ WYKORZYSTYWANE NARZEDZIA:
 -MatPlotLib
 -Pandas
 -PySimpleGUI
--essa.py
 
 
 
