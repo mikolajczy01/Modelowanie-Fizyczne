@@ -41,7 +41,7 @@ wykresy = fig.add_subplot(1,2,2)
 wykresy.plot(x,x*float(wsp[1])+float(wsp[0]))
 wykresy.grid(True)
 
-
+#PITRÓWAAAAA
 
 #okno wykresiory
 
