@@ -32,27 +32,44 @@ plt.xlim(-10, 10)
 fig = matplotlib.figure.Figure(figsize=(16, 9), dpi=100)
 x = np.arange(-10,11,1)
 
-wykresy = fig.add_subplot(1,2,1)
+wykresy = fig.add_subplot(1,1,1)
 wykresy.plot(x,x*float(wsp[0])+float(wsp[1]))
 wykresy.grid(True)
 
 
-wykresy = fig.add_subplot(1,2,2)
-wykresy.plot(x,x*float(wsp[1])+float(wsp[0]))
-wykresy.grid(True)
-
-#PITRÓWAAAAA
+# wykresy = fig.add_subplot(1,2,2)
+# wykresy.plot(x,x*float(wsp[1])+float(wsp[0]))
+# wykresy.grid(True)
 
 #okno wykresiory
+wybor_wykresu = [
+    [
+        sg.Listbox(
+            values=["essa","lessa"], enable_events=True, size=(40, 20), key="-FILE LIST-"
+        )
+    ],
+]
 
-layout = [[sg.Text('Wykresior')],
-          [sg.Canvas(key='CANVAS')],
-          [sg.Button('Ok')]]
+wykres = [
+    [sg.Text('Wykresior')],
+    [sg.Canvas(key='CANVAS')]
+]
+
+layout = [
+    [
+        sg.Column(wybor_wykresu),
+        sg.VSeperator(),
+        sg.Column(wykres),
+    ]
+]
 
 window = sg.Window('Essa gaming', layout, finalize=True, element_justification='center',font='Helvetica 18',location=(0, 0),)
 
 fig_canvas_agg = draw_figure(window['CANVAS'].TKCanvas, fig)
 
-event, values = window.read()
+while True:
+    event, values = window.read()
+    if event == "Exit" or event == sg.WIN_CLOSED:
+        break
 
 window.close()
