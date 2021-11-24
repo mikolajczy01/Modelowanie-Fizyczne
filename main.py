@@ -33,12 +33,12 @@ fig = matplotlib.figure.Figure(figsize=(16, 9), dpi=100)
 x = np.arange(-10,11,1)
 
 wykresy = fig.add_subplot(1,2,1)
-wykresy.plot(x,x*int(wsp[0])+int(wsp[1]))
+wykresy.plot(x,x*float(wsp[0])+float(wsp[1]))
 wykresy.grid(True)
 
 
 wykresy = fig.add_subplot(1,2,2)
-wykresy.plot(x,x*int(wsp[1])+int(wsp[0]))
+wykresy.plot(x,x*float(wsp[1])+float(wsp[0]))
 wykresy.grid(True)
 
 
