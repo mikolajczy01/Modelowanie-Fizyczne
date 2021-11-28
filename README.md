@@ -13,7 +13,7 @@ Rotacja:
 Linie prądu to linie styczne w każdym punkcie pola w pewnej chwili czasu do wektora prędkości.
 
 WYKORZYSTYWANE NARZEDZIA:
--NumPy
+-NumPy(/n)
 -SciPy
 -MatPlotLib
 -Pandas
