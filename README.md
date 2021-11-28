@@ -8,9 +8,11 @@ Pole prędkości określa prędkość przepływu płynu w każdym punkcie przest
 Pole prędkości jest polem wektorowym co umożliwia nam przeprowadzenie na nim operacji różniczkowych takich jak:
 
 Dywergencja-pole skalarne równe sumie pochodnych cząstkowych składowych wektora pola:
+
 ![dywergencja](https://user-images.githubusercontent.com/94971277/143764816-5860e487-4b99-4f40-a040-94452d7f1915.png)
 
 Rotacja-tworzy pole wektorowe, które wskazuje wirowanie pola. Jeżeli rotacja jest równa 0 oznacza to że pole jest potencjalne. Wyznacza się ją przez wzór:
+
 ![rotacja](https://user-images.githubusercontent.com/94971277/143765056-2105b11a-d40c-4114-809a-b499d771cc4b.png)
 
 Linie prądu to linie styczne w każdym punkcie pola w pewnej chwili czasu do wektora prędkości.
