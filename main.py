@@ -17,10 +17,17 @@ def delete_fig_agg(fig_agg):
     fig_agg.get_tk_widget().forget()
     fig_agg.get_tk_widget().delete('all')
 
+def LiniePola(wykres,x,y):
+    for c in range(-100,100,1):
+        wykres.plot(x,y+c, c=(0.5, 0.5, 0.5, 0.5))
+    wykres.grid(True)
+    wykres.set_xlim(0,20)
+    wykres.set_ylim(0,20)
+
 #okno pobieranie
 layout = [[sg.Text("Wykres wariacie")],
-            [sg.Text("a ="),sg.Input()],
-            [sg.Text("b ="),sg.Input()],
+            [sg.Text("Ux ="),sg.Input()],
+            [sg.Text("Uy ="),sg.Input()],
             [sg.Button('Dalej')]]
 
 window = sg.Window('Essa gaming', layout, finalize=True, element_justification='center',font='Helvetica 18')
@@ -31,24 +38,34 @@ window.close()
 
 #WYKRESIORY
 
-fig = matplotlib.figure.Figure(figsize=(5, 4), dpi=100)
-fig2 = matplotlib.figure.Figure(figsize=(5, 4), dpi=100)
-wykresy = fig.add_subplot(1,1,1)
-x = np.arange(-10,11,1)
+fig = matplotlib.figure.Figure(figsize=(5, 4), dpi=200)
+fig2 = matplotlib.figure.Figure(figsize=(5, 4), dpi=200)
+fig3 = matplotlib.figure.Figure(figsize=(5, 4), dpi=200)
 
-wykresy.plot(x,x*float(wsp[0])+float(wsp[1]))
-wykresy.grid(True)
+x = np.arange(0,1000)
+
+wykresy = fig.add_subplot(1,1,1)
+y=x*float(wsp[0])+float(wsp[1])
+LiniePola(wykresy,x,y)
+
 
 
 wykresy = fig2.add_subplot(1,1,1)
-wykresy.plot(x,x*2)
-wykresy.grid(True)
+y=x**2
+LiniePola(wykresy,x,y)
+
+
+wykresy = fig3.add_subplot(1,1,1)
+y=(x**3)+float(wsp[0])
+LiniePola(wykresy,x,y)
+
 
 #okno wykresiory
 
-lista_wykresow = ["essa","lessa"]
+lista_wykresow = ["essa","lessa","julkakulka"]
 
 wybor_wykresu = [
+    [sg.Text("Dostępne wykresy: ")],
     [
         sg.Listbox(
             values=lista_wykresow, enable_events=True, size=(40, 20), key="-WYKRESY-",
@@ -69,7 +86,7 @@ layout = [
     [sg.Button('Exit')]
 ]
 
-window = sg.Window('Essa gaming', layout, finalize=True, element_justification='center',font='Helvetica 18',location=(0, 0),)
+window = sg.Window('Essa gaming', layout, finalize=True, element_justification='center',font='Helvetica 18',location=(0, 0),resizable=True)
 
 window["-WYKRESY-"].update(set_to_index=0)
 
@@ -88,7 +105,9 @@ while True:
             window.Refresh()
         if values['-WYKRESY-'][0]=="essa":
             fig_agg = draw_figure(window['-CANVAS-'].TKCanvas, fig)
-        else:
+        elif(values['-WYKRESY-'][0]=="lessa"):
             fig_agg = draw_figure(window['-CANVAS-'].TKCanvas, fig2)
+        elif(values['-WYKRESY-'][0]=="julkakulka"):
+            fig_agg = draw_figure(window['-CANVAS-'].TKCanvas, fig3)
 
 window.close()
