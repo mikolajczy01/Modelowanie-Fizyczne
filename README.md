@@ -6,8 +6,8 @@ Wyznaczanie własności pola prędkości, przyspieszenia elementu płynu oraz wy
 OPIS ZJAWISKA:
 Pole prędkości określa prędkość przepływu płynu w każdym punkcie przestrzeni oraz posiada informacje o zmianach objętościowych ciała jak i zmianach zachodzących w danym polu.
 Pole prędkości jest polem wektorowym co umożliwia nam przeprowadzenie na nim operacji różniczkowych takich jak:
-
-Dywergencja-pole skalarne równe sumie pochodnych cząstkowych składowych wektora pola:![dywergencja](https://user-images.githubusercontent.com/94971277/143764816-5860e487-4b99-4f40-a040-94452d7f1915.png)
+Dywergencja-pole skalarne równe sumie pochodnych cząstkowych składowych wektora pola:
+![dywergencja](https://user-images.githubusercontent.com/94971277/143764816-5860e487-4b99-4f40-a040-94452d7f1915.png)
 Rotacja:
 
 Linie prądu to linie styczne w każdym punkcie pola w pewnej chwili czasu do wektora prędkości.
