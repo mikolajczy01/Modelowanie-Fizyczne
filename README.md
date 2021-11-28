@@ -8,16 +8,22 @@ Pole prędkości określa prędkość przepływu płynu w każdym punkcie przest
 Pole prędkości jest polem wektorowym co umożliwia nam przeprowadzenie na nim operacji różniczkowych takich jak:
 Dywergencja-pole skalarne równe sumie pochodnych cząstkowych składowych wektora pola:
 ![dywergencja](https://user-images.githubusercontent.com/94971277/143764816-5860e487-4b99-4f40-a040-94452d7f1915.png)
+
 Rotacja:
 
 Linie prądu to linie styczne w każdym punkcie pola w pewnej chwili czasu do wektora prędkości.
 
 WYKORZYSTYWANE NARZEDZIA:
--NumPy(/n)
+-NumPy
+
 -SciPy
+
 -MatPlotLib
+
 -Pandas
+
 -PySimpleGUI
+
 OGÓLNY OPIS PROJEKTU I MOŻLIWE ALTERNATYWY:
 Projekt ma na celu wyznaczenie pola prędkości, przyspieszenia elementu płynu i jego własności takich jak rotacja, dywergencja i gradient pola prędkości, za pomocą wprowadzonych przez użytkownika danych do okienka programu oraz wykreślenie torów oraz linii prądu w danym przepływie. Altermatywą może być wykreślenie torów w przestrzeni trójwymiarowej.
 
