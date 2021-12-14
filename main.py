@@ -31,8 +31,8 @@ def LiniePola(wykres,x1,y1):
 layout = [[sg.Text("Wykres wariacie")],
             [sg.Text("Ux ="),sg.InputText()],
             [sg.Text("Uy ="),sg.InputText()],
-            [sg.Text("Xo ="),sg.InputText()],
-            [sg.Text("Yo ="),sg.InputText()],
+            # [sg.Text("Xo ="),sg.InputText()],
+            # [sg.Text("Yo ="),sg.InputText()],
             [sg.Button('Dalej')]]
 
 window = sg.Window('Essa gaming', layout, finalize=True, element_justification='center',font='Helvetica 18')
@@ -48,7 +48,6 @@ V,U = np.mgrid[1:20:100j,1:20:100j]
 
 f = sp.integrate(1/sp.sympify(wsp[0]),x)
 g = sp.integrate(1/sp.sympify(wsp[1]),y)
-#
 wynik = sp.sympify(sp.solve(sp.Eq(f,g),y))
 
 sp.pprint(f, use_unicode=True)
@@ -57,41 +56,38 @@ sp.pprint(wynik[0], use_unicode=True)
 
 for i in range(100):
     for j in range(100):
-        x1 = X[i,j]
-        y1 = Y[i,j]
-        V[i, j] = wynik[0].subs({x: x1, y: y1})
+        V[i, j] = wynik[0].subs({x: X[i,j], y: Y[i,j]})
 
 fig1 = plt.figure(figsize=(12, 7), dpi=200)
 
 ax0 = fig1.add_subplot(1,1,1)
 strm = ax0.streamplot(X, Y, X, V, density=1,color=V,cmap='winter',linewidth=1)
 fig1.colorbar(strm.lines)
-ax0.set_title('Varying Density')
+ax0.set_title('Linie prądu')
 ax0.grid(True)
 
 #wykres toru
 
-Y,X = np.mgrid[1:20,1:20]
-V,U = np.mgrid[1:20,1:20]
+X=np.linspace(1,20,100)
+Y=np.linspace(1,20,100)
 
-f = sp.integrate(sp.sympify(wsp[0]),x)
-g = sp.integrate(sp.sympify(wsp[1]),y)
-# sp.pprint(g, use_unicode=True)
-# sp.pprint(f, use_unicode=True)
+f = sp.integrate(1/sp.sympify(wsp[0]),x)
+g = sp.integrate(1/sp.sympify(wsp[1]),y)
+wynik = sp.sympify(sp.solve(sp.Eq(f,g),y))
 
-for i in range(19):
-    for j in range(19):
-        x1 = X[i,j]
-        y1 = Y[i,j]
-        U[i,j] = sp.sympify(wsp[0]).subs({x:x1, y:y1})
-        V[i,j] = sp.sympify(wsp[1]).subs({x:x1, y:y1})
+for i in range(100):
+        Y[i]=wynik[0].subs({x: X[i]})
 
 fig2 = plt.figure(figsize=(12, 7), dpi=200)
 
 ax0 = fig2.add_subplot(1,1,1)
-strm = ax0.streamplot(X, Y, U, V, density=1,color=V,cmap='winter',linewidth=1)
-fig2.colorbar(strm.lines)
-ax0.set_title('Varying Density')
+strm = ax0.plot(X, Y)
+print(X[50])
+print(Y[50])
+print(X[51])
+print(Y[51])
+ax0.arrow(X[50],Y[50],X[51]-X[50],Y[51]-Y[50], shape='full', lw=0, length_includes_head=True)
+ax0.set_title('Tor elementu płynu')
 ax0.grid(True)
 
 #okno wykresiory
