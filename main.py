@@ -7,7 +7,7 @@ import matplotlib
 matplotlib.use('TkAgg')
 
 sp.init_printing()
-x,y = sp.symbols('x y')
+x,y,z = sp.symbols('x y z',real = True)
 
 def draw_figure(canvas, figure, loc=(0, 0)):
     figure_canvas_agg = FigureCanvasTkAgg(figure, canvas)
@@ -27,6 +27,18 @@ def LiniePola(wykres,x1,y1):
     wykres.set_xlim(0,20)
     wykres.set_ylim(0,20)
 
+def rot(ux,uy,uz=0):
+    A = sp.diff(sp.sympify(uz),y)-sp.diff(sp.sympify(uy),z)
+    B = sp.diff(sp.sympify(ux),z)-sp.diff(sp.sympify(uz),x)
+    C = sp.diff(sp.sympify(uy),x)-sp.diff(sp.sympify(uy),y)
+    return A,B,C
+
+def div(ux,uy,uz=0):
+    A = sp.diff(sp.sympify(ux),x)
+    B = sp.diff(sp.sympify(uy),y)
+    C = sp.diff(sp.sympify(uz),z)
+    return A+B+C
+
 #okno pobieranie
 layout = [[sg.Text("Wykres wariacie")],
             [sg.Text("Ux ="),sg.InputText()],
@@ -41,6 +53,13 @@ event, wsp = window.read()
 
 window.close()
 #WYKRESIORY
+
+UX,UY,UZ=rot(wsp[0],wsp[1])
+sp.pprint(UX, use_unicode=True)
+sp.pprint(UY, use_unicode=True)
+sp.pprint(UZ, use_unicode=True)
+dywergencja = div(wsp[0],wsp[1])
+sp.pprint(dywergencja,use_unicode=True)
 
 #wykres linii prądu
 Y,X = np.mgrid[1:20:100j,1:20:100j]
@@ -82,17 +101,30 @@ fig2 = plt.figure(figsize=(12, 7), dpi=200)
 
 ax0 = fig2.add_subplot(1,1,1)
 strm = ax0.plot(X, Y)
-print(X[50])
-print(Y[50])
-print(X[51])
-print(Y[51])
-ax0.arrow(X[50],Y[50],X[51]-X[50],Y[51]-Y[50], shape='full', lw=0, length_includes_head=True)
+# print(X[50])
+# print(Y[50])
+# print(X[51])
+# print(Y[51])
+# ax0.arrow(X[50],Y[50],X[51]-X[50],Y[51]-Y[50], shape='full', lw=0, length_includes_head=True)
 ax0.set_title('Tor elementu płynu')
 ax0.grid(True)
 
+#wykres roatcji
+fig3 = plt.figure(figsize=(12,7),dpi=200)
+ax0 = fig3.add_subplot(1,1,1,projection='3d')
+X,Y,Z=np.meshgrid(np.arange(1, 20),np.arange(1, 20),np.arange(1, 20))
+U,V,W = rot(wsp[0],wsp[1])
+
+strm=ax0.quiver(X,Y,Z,U,V,W)
+ax0.set_title('Rotacja')
+ax0.grid(True)
+
+
+
+
 #okno wykresiory
 
-lista_wykresow = ["Linie prądu","Tor elementu płynu"]
+lista_wykresow = ["Linie prądu","Tor elementu płynu","Rotacja"]
 
 wybor_wykresu = [
     [sg.Text("Dostępne wykresy: ")],
@@ -133,4 +165,6 @@ while True:
             fig_agg = draw_figure(window['-CANVAS-'].TKCanvas, fig1)
         elif(values['-WYKRESY-'][0]=="Tor elementu płynu"):
             fig_agg = draw_figure(window['-CANVAS-'].TKCanvas, fig2)
+        elif(values['-WYKRESY-'][0]=="Rotacja"):
+            fig_agg = draw_figure(window['-CANVAS-'].TKCanvas, fig3)
 window.close()
