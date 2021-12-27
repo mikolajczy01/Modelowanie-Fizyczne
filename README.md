@@ -20,7 +20,7 @@ Linie prądu to linie styczne w każdym punkcie pola w pewnej chwili czasu do we
 WYKORZYSTYWANE NARZEDZIA:
 -NumPy
 
--SciPy
+-SymPy
 
 -MatPlotLib
 
