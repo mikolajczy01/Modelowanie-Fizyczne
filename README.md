@@ -27,7 +27,7 @@ WYKORZYSTYWANE NARZEDZIA:
 -PySimpleGUI
 
 OGÓLNY OPIS PROJEKTU I MOŻLIWE ALTERNATYWY:
-Projekt ma na celu wyznaczenie pola prędkości, przyspieszenia elementu płynu i jego własności takich jak rotacja, dywergencja i gradient pola prędkości, za pomocą wprowadzonych przez użytkownika danych do okienka programu oraz wykreślenie torów oraz linii prądu w danym przepływie. Altermatywą może być wykreślenie torów w przestrzeni trójwymiarowej.
+Projekt ma na celu wyznaczenie pola prędkości, przyspieszenia elementu płynu i jego własności takich jak rotacja, dywergencja i gradient pola prędkości, za pomocą wprowadzonych przez użytkownika danych do okienka pobierania programu oraz wyświetlenie okna z wykreślonymi torami oraz liniami prądu w danym przepływie. Altermatywą może być wykreślenie torów w przestrzeni trójwymiarowej.
 
 SPECYFICZNE WYMAGANIA:
 
