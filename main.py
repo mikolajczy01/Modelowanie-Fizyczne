@@ -5,9 +5,8 @@ import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import matplotlib
 matplotlib.use('TkAgg')
-
 sp.init_printing()
-x,y,z = sp.symbols('x y z')
+x,y,z = sp.symbols('x y z',real = True)
 
 def draw_figure(canvas, figure, loc=(0, 0)):
     figure_canvas_agg = FigureCanvasTkAgg(figure, canvas)
@@ -30,7 +29,7 @@ def LiniePola(wykres,x1,y1):
 def rot(ux,uy,uz=0):
     A = sp.diff(sp.sympify(uz),y)-sp.diff(sp.sympify(uy),z)
     B = sp.diff(sp.sympify(ux),z)-sp.diff(sp.sympify(uz),x)
-    C = sp.diff(sp.sympify(uy),x)-sp.diff(sp.sympify(ux),y)
+    C = sp.diff(sp.sympify(uy),x)-sp.diff(sp.sympify(uy),y)
     return A,B,C
 
 def div(ux,uy,uz=0):
@@ -40,14 +39,14 @@ def div(ux,uy,uz=0):
     return A+B+C
 
 #okno pobieranie
-layout = [[sg.Text("Wykres wariacie")],
+sg.theme('DarkBlue1')
+layout = [[sg.Text("Podaj Ux i Uy")],
             [sg.Text("Ux ="),sg.InputText()],
             [sg.Text("Uy ="),sg.InputText()],
             # [sg.Text("Xo ="),sg.InputText()],
             # [sg.Text("Yo ="),sg.InputText()],
             [sg.Button('Dalej')]]
-
-window = sg.Window('Essa gaming', layout, finalize=True, element_justification='center',font='Helvetica 18')
+window = sg.Window('Pole Prędkości', layout, finalize=True, element_justification='center',font='Helvetica 18')
 
 event, wsp = window.read()
 
@@ -64,7 +63,6 @@ sp.pprint(dywergencja,use_unicode=True)
 #wykres linii prądu
 Y,X = np.mgrid[1:20:100j,1:20:100j]
 V,U = np.mgrid[1:20:100j,1:20:100j]
-diver,miver = np.mgrid[1:20:100j,1:20:100j]
 
 f = sp.integrate(1/sp.sympify(wsp[0]),x)
 g = sp.integrate(1/sp.sympify(wsp[1]),y)
@@ -76,13 +74,12 @@ sp.pprint(wynik[0], use_unicode=True)
 
 for i in range(100):
     for j in range(100):
-        V[i, j] = wynik[0].subs({x: X[i, j]})
-        diver[i, j] = sp.sympify(div(wsp[0],wsp[1])).subs({x: X[i, j]})
+        V[i, j] = wynik[0].subs({x: X[i,j], y: Y[i,j]})
 
 fig1 = plt.figure(figsize=(12, 7), dpi=200)
 
 ax0 = fig1.add_subplot(1,1,1)
-strm = ax0.streamplot(X, Y, X, V, density=1,color=diver,cmap='winter',linewidth=1)
+strm = ax0.streamplot(X, Y, X, V, density=1,color=V,cmap='winter',linewidth=1)
 fig1.colorbar(strm.lines)
 ax0.set_title('Linie prądu')
 ax0.grid(True)
@@ -121,11 +118,29 @@ strm=ax0.quiver(X,Y,Z,U,V,W)
 ax0.set_title('Rotacja')
 ax0.grid(True)
 
+#progressbar
+sg.theme('DarkGrey8')
+progressbar = [
+    [sg.ProgressBar(1000, orientation='h', size=(50, 20), key='progressbar')]
+]
 
-
+layout = [
+    [sg.Frame('Wczytywanie',layout= progressbar)],
+    [sg.Submit('Start'),sg.Cancel()]
+]
+window = sg.Window('Pole prędkości', layout)
+progress_bar = window['progressbar']
+while True:
+    event, values = window.read(timeout=10)
+    if event == 'Cancel'  or event is None:
+        break
+    elif event == 'Start':
+        for i in range(0,1000):
+            progress_bar.UpdateBar(i + 1)
+        window.close()
 
 #okno wykresiory
-
+sg.theme('DarkBlue2')
 lista_wykresow = ["Linie prądu","Tor elementu płynu","Rotacja"]
 
 wybor_wykresu = [
@@ -146,7 +161,7 @@ layout = [
     [sg.Button('Exit')]
 ]
 
-window = sg.Window('Essa gaming', layout, finalize=True, element_justification='center',font='Helvetica 18',location=(0, 0),resizable=True)
+window = sg.Window('Pole Prędkości', layout, finalize=True, element_justification='center',font='Helvetica 18',location=(0, 0),resizable=True)
 
 window["-WYKRESY-"].update(set_to_index=0)
 
