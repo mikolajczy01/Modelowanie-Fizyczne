@@ -10,18 +10,17 @@ sp.init_printing()
 x,y,z = sp.symbols('x y z')
 
 #progressbar
-def bar(n,i,j,k):
+def bar(n,nazwa):
     sg.theme('DarkGrey8')
     progressbar = [
         [sg.ProgressBar(n,orientation='h', size=(50, 20), key='progressbar')]
     ]
 
     layout =[
-        [sg.Frame('Wczytywanie',layout= progressbar)],
+        [sg.Frame(nazwa,layout= progressbar)],
         [sg.Cancel()]
     ]
     window = sg.Window('Pole prędkości', layout,no_titlebar=True, alpha_channel=1, grab_anywhere=True)
-    #progress_bar = window['progressbar']
     return window
 
 def draw_figure(canvas, figure, loc=(0, 0)):
@@ -82,7 +81,7 @@ sp.pprint(f, use_unicode=True)
 sp.pprint(g, use_unicode=True)
 sp.pprint(wynik[0], use_unicode=True)
 
-progressbar=bar(10000,100,100,0)
+progressbar=bar(10000,"Wykres linii pola")
 
 for i in range(100):
     for j in range(100):
@@ -90,6 +89,7 @@ for i in range(100):
         diver[i, j] = sp.sympify(div(wsp[0], wsp[1])).subs({x: X[i, j], y: Y[i, j]})
         progressbar.Read(timeout=0)
         progressbar['progressbar'].UpdateBar(i*100+j)
+
 progressbar.close()
 
 fig1 = plt.figure(figsize=(12, 7), dpi=200)
@@ -109,11 +109,13 @@ f = sp.integrate(1/sp.sympify(wsp[0]),x)
 g = sp.integrate(1/sp.sympify(wsp[1]),y)
 wynik = sp.sympify(sp.solve(sp.Eq(f,g),y))
 
-progressbar=bar(1000,100,0,0)
-for i in range(100):
+progressbar=bar(1000)
+
+for i in range(100, "Wykers toru ruchu"):
         Y[i]=wynik[0].subs({x: X[i]})
         progressbar.Read(timeout=0)
         progressbar['progressbar'].UpdateBar(i)
+
 progressbar.close()
 
 fig2 = plt.figure(figsize=(12, 7), dpi=200)
@@ -127,8 +129,8 @@ ax0.grid(True)
 fig3 = plt.figure(figsize=(12,7),dpi=200)
 
 ax0 = fig3.add_subplot(1,1,1,projection='3d')
-X,Y,Z = np.meshgrid(np.arange(1,20),np.arange(1,20),np.arange(1,20))
-U,V,W = np.meshgrid(np.arange(1,20),np.arange(1,20),np.arange(1,20))
+X,Y,Z = np.meshgrid(np.arange(1,21),np.arange(1,21),np.arange(1,21))
+U,V,W = np.meshgrid(np.arange(1,21),np.arange(1,21),np.arange(1,21))
 
 wynikx = sp.sympify(rotX(wsp[1]))
 wyniky = sp.sympify(rotY(wsp[0]))
@@ -138,16 +140,16 @@ sp.pprint(wynikx, use_unicode=True)
 sp.pprint(wyniky, use_unicode=True)
 sp.pprint(wynikz, use_unicode=True)
 
-progressbar=bar(8000,20,20,20)
+progressbar=bar(8000,"Wykres rotacji")
 
-for i in range(19):
-    for j in range(19):
-        for k in range(19):
+for i in range(20):
+    for j in range(20):
+        for k in range(20):
             U[i, j, k]=wynikx.subs({z: Z[i, j], y: Y[i, j],x: X[i,j]})
             V[i, j, k]=wyniky.subs({z: Z[i, j], y: Y[i, j],x: X[i,j]})
             W[i, j, k]=wynikz.subs({z: Z[i, j], y: Y[i, j],x: X[i,j]})
             progressbar.Read(timeout=0)
-            progressbar['progressbar'].UpdateBar(i * 100 + j)
+            progressbar['progressbar'].UpdateBar(i*400+j*20+k)
 
 progressbar.close()
 
