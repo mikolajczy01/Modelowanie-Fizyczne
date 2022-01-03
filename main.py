@@ -4,9 +4,10 @@ import PySimpleGUI as sg
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import matplotlib
+
 matplotlib.use('TkAgg')
 sp.init_printing()
-x,y,z = sp.symbols('x y z',real = True)
+x,y,z = sp.symbols('x y z')
 
 def draw_figure(canvas, figure, loc=(0, 0)):
     figure_canvas_agg = FigureCanvasTkAgg(figure, canvas)
@@ -14,23 +15,21 @@ def draw_figure(canvas, figure, loc=(0, 0)):
     figure_canvas_agg.get_tk_widget().pack(side='top', fill='both', expand=1)
     return figure_canvas_agg
 
-
 def delete_fig_agg(fig_agg):
     fig_agg.get_tk_widget().forget()
     fig_agg.get_tk_widget().delete('all')
 
-def LiniePola(wykres,x1,y1):
-    for c in range(-100,100,1):
-        wykres.plot(x1,y1+c, c=(0.5, 0.5, 0.5, 0.5))
-    wykres.grid(True)
-    wykres.set_xlim(0,20)
-    wykres.set_ylim(0,20)
-
-def rot(ux,uy,uz=0):
+def rotX(uy,uz=0):
     A = sp.diff(sp.sympify(uz),y)-sp.diff(sp.sympify(uy),z)
-    B = sp.diff(sp.sympify(ux),z)-sp.diff(sp.sympify(uz),x)
-    C = sp.diff(sp.sympify(uy),x)-sp.diff(sp.sympify(uy),y)
-    return A,B,C
+    return A
+
+def rotY(ux,uz=0):
+    B = sp.diff(sp.sympify(ux), z) - sp.diff(sp.sympify(uz), x)
+    return B
+
+def rotZ(ux,uy):
+    C = sp.diff(sp.sympify(uy), x) - sp.diff(sp.sympify(ux), y)
+    return C
 
 def div(ux,uy,uz=0):
     A = sp.diff(sp.sympify(ux),x)
@@ -63,14 +62,14 @@ f = sp.integrate(1/sp.sympify(wsp[0]),x)
 g = sp.integrate(1/sp.sympify(wsp[1]),y)
 wynik = sp.sympify(sp.solve(sp.Eq(f,g),y))
 
-# sp.pprint(f, use_unicode=True)
-# sp.pprint(g, use_unicode=True)
-# sp.pprint(wynik[0], use_unicode=True)
+sp.pprint(f, use_unicode=True)
+sp.pprint(g, use_unicode=True)
+sp.pprint(wynik[0], use_unicode=True)
 
 for i in range(100):
     for j in range(100):
         V[i, j] = wynik[0].subs({x: X[i, j]})
-        diver[i, j] = sp.sympify(div(wsp[0], wsp[1])).subs({x: X[i, j]})
+        diver[i, j] = sp.sympify(div(wsp[0],wsp[1])).subs({x: X[i, j], y: Y[i,j]})
 
 fig1 = plt.figure(figsize=(12, 7), dpi=200)
 
@@ -106,11 +105,28 @@ ax0.grid(True)
 
 #wykres roatcji
 fig3 = plt.figure(figsize=(12,7),dpi=200)
-ax0 = fig3.add_subplot(1,1,1,projection='3d')
-X,Y,Z=np.meshgrid(np.arange(1, 20),np.arange(1, 20),np.arange(1, 20))
-U,V,W = rot(wsp[0],wsp[1])
 
-strm=ax0.quiver(X,Y,Z,U,V,W)
+ax0 = fig3.add_subplot(1,1,1,projection='3d')
+X,Y,Z = np.meshgrid(np.arange(1,20),np.arange(1,20),np.arange(1,20))
+U,V,W = np.meshgrid(np.arange(1,20),np.arange(1,20),np.arange(1,20))
+
+wynikx = sp.sympify(rotX(wsp[1]))
+wyniky = sp.sympify(rotY(wsp[0]))
+wynikz = sp.sympify(rotZ(wsp[0],wsp[1]))
+
+sp.pprint(wynikx, use_unicode=True)
+sp.pprint(wyniky, use_unicode=True)
+sp.pprint(wynikz, use_unicode=True)
+
+
+for i in range(19):
+    for j in range(19):
+        for k in range(19):
+            U[i, j, k]=wynikx.subs({z: Z[i, j], y: Y[i, j],x: X[i,j]})
+            V[i, j, k]=wyniky.subs({z: Z[i, j], y: Y[i, j],x: X[i,j]})
+            W[i, j, k]=wynikz.subs({z: Z[i, j], y: Y[i, j],x: X[i,j]})
+
+strm=ax0.quiver(X,Y,Z,U,V,W, length=0.1)
 ax0.set_title('Rotacja')
 ax0.grid(True)
 
