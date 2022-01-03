@@ -53,33 +53,29 @@ event, wsp = window.read()
 window.close()
 #WYKRESIORY
 
-UX,UY,UZ=rot(wsp[0],wsp[1])
-sp.pprint(UX, use_unicode=True)
-sp.pprint(UY, use_unicode=True)
-sp.pprint(UZ, use_unicode=True)
-dywergencja = div(wsp[0],wsp[1])
-sp.pprint(dywergencja,use_unicode=True)
 
-#wykres linii prądu
+# wykres linii prądu
 Y,X = np.mgrid[1:20:100j,1:20:100j]
 V,U = np.mgrid[1:20:100j,1:20:100j]
+diver,miver = np.mgrid[1:20:100j,1:20:100j]
 
 f = sp.integrate(1/sp.sympify(wsp[0]),x)
 g = sp.integrate(1/sp.sympify(wsp[1]),y)
 wynik = sp.sympify(sp.solve(sp.Eq(f,g),y))
 
-sp.pprint(f, use_unicode=True)
-sp.pprint(g, use_unicode=True)
-sp.pprint(wynik[0], use_unicode=True)
+# sp.pprint(f, use_unicode=True)
+# sp.pprint(g, use_unicode=True)
+# sp.pprint(wynik[0], use_unicode=True)
 
 for i in range(100):
     for j in range(100):
-        V[i, j] = wynik[0].subs({x: X[i,j], y: Y[i,j]})
+        V[i, j] = wynik[0].subs({x: X[i, j]})
+        diver[i, j] = sp.sympify(div(wsp[0], wsp[1])).subs({x: X[i, j]})
 
 fig1 = plt.figure(figsize=(12, 7), dpi=200)
 
 ax0 = fig1.add_subplot(1,1,1)
-strm = ax0.streamplot(X, Y, X, V, density=1,color=V,cmap='winter',linewidth=1)
+strm = ax0.streamplot(X, Y, X, V, density=1,color=diver,cmap='winter',linewidth=1)
 fig1.colorbar(strm.lines)
 ax0.set_title('Linie prądu')
 ax0.grid(True)
