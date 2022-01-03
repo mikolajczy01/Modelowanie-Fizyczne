@@ -17,8 +17,7 @@ def bar(n,nazwa):
     ]
 
     layout =[
-        [sg.Frame(nazwa,layout= progressbar)],
-        [sg.Cancel()]
+        [sg.Frame(nazwa,layout= progressbar)]
     ]
     window = sg.Window('Pole prędkości', layout,no_titlebar=True, alpha_channel=1, grab_anywhere=True)
     return window
@@ -109,9 +108,9 @@ f = sp.integrate(1/sp.sympify(wsp[0]),x)
 g = sp.integrate(1/sp.sympify(wsp[1]),y)
 wynik = sp.sympify(sp.solve(sp.Eq(f,g),y))
 
-progressbar=bar(1000)
+progressbar=bar(100, "Wykres toru ruchu")
 
-for i in range(100, "Wykers toru ruchu"):
+for i in range(100):
         Y[i]=wynik[0].subs({x: X[i]})
         progressbar.Read(timeout=0)
         progressbar['progressbar'].UpdateBar(i)
