@@ -8,7 +8,28 @@ import matplotlib
 matplotlib.use('TkAgg')
 sp.init_printing()
 x,y,z = sp.symbols('x y z')
+#progressbar
+def bar(n,i,j,k):
+    sg.theme('DarkGrey8')
+    progressbar = [
+        [sg.ProgressBar(n,orientation='h', size=(50, 20), key='progressbar')]
+    ]
 
+    layout =[
+        [sg.Frame('Wczytywanie',layout= progressbar)],
+        [sg.Cancel()]
+    ]
+    window = sg.Window('Pole prędkości', layout,no_titlebar=True, alpha_channel=1, grab_anywhere=True)
+    progress_bar = window['progressbar']
+    while True:
+        event, values = window.read(timeout=10)
+        if event == 'Cancel' or event is None:
+            break
+        else:
+            for i in range(0, n):
+                progress_bar.UpdateBar(i + j+k)
+        window.close()
+    return progress_bar
 def draw_figure(canvas, figure, loc=(0, 0)):
     figure_canvas_agg = FigureCanvasTkAgg(figure, canvas)
     figure_canvas_agg.draw()
@@ -66,10 +87,12 @@ sp.pprint(f, use_unicode=True)
 sp.pprint(g, use_unicode=True)
 sp.pprint(wynik[0], use_unicode=True)
 
+progressbar=bar(10000,100,100,0)
 for i in range(100):
     for j in range(100):
         V[i, j] = wynik[0].subs({x: X[i, j]})
-        diver[i, j] = sp.sympify(div(wsp[0],wsp[1])).subs({x: X[i, j], y: Y[i,j]})
+        diver[i, j] = sp.sympify(div(wsp[0], wsp[1])).subs({x: X[i, j], y: Y[i, j]})
+        progressbar.UpdateBar(i * 100 + j)
 
 fig1 = plt.figure(figsize=(12, 7), dpi=200)
 
@@ -88,9 +111,10 @@ f = sp.integrate(1/sp.sympify(wsp[0]),x)
 g = sp.integrate(1/sp.sympify(wsp[1]),y)
 wynik = sp.sympify(sp.solve(sp.Eq(f,g),y))
 
+progressbar(1000,100,0)
 for i in range(100):
         Y[i]=wynik[0].subs({x: X[i]})
-
+        progressbar.UpdateBar(i)
 fig2 = plt.figure(figsize=(12, 7), dpi=200)
 
 ax0 = fig2.add_subplot(1,1,1)
@@ -118,6 +142,7 @@ sp.pprint(wynikx, use_unicode=True)
 sp.pprint(wyniky, use_unicode=True)
 sp.pprint(wynikz, use_unicode=True)
 
+progressbar(8000,20,20,20)
 
 for i in range(19):
     for j in range(19):
@@ -125,31 +150,10 @@ for i in range(19):
             U[i, j, k]=wynikx.subs({z: Z[i, j], y: Y[i, j],x: X[i,j]})
             V[i, j, k]=wyniky.subs({z: Z[i, j], y: Y[i, j],x: X[i,j]})
             W[i, j, k]=wynikz.subs({z: Z[i, j], y: Y[i, j],x: X[i,j]})
-
+            progressbar.UpdateBar(i*20+j*20+k)
 strm=ax0.quiver(X,Y,Z,U,V,W, length=0.1)
 ax0.set_title('Rotacja')
 ax0.grid(True)
-
-#progressbar
-sg.theme('DarkGrey8')
-progressbar = [
-    [sg.ProgressBar(1000, orientation='h', size=(50, 20), key='progressbar')]
-]
-
-layout = [
-    [sg.Frame('Wczytywanie',layout= progressbar)],
-    [sg.Submit('Start'),sg.Cancel()]
-]
-window = sg.Window('Pole prędkości', layout)
-progress_bar = window['progressbar']
-while True:
-    event, values = window.read(timeout=10)
-    if event == 'Cancel'  or event is None:
-        break
-    elif event == 'Start':
-        for i in range(0,1000):
-            progress_bar.UpdateBar(i + 1)
-        window.close()
 
 #okno wykresiory
 sg.theme('DarkBlue2')
