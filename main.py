@@ -4,10 +4,11 @@ import PySimpleGUI as sg
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import matplotlib
-
+#JD
 matplotlib.use('TkAgg')
 sp.init_printing()
 x,y,z = sp.symbols('x y z')
+
 #progressbar
 def bar(n,i,j,k):
     sg.theme('DarkGrey8')
