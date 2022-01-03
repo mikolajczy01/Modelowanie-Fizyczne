@@ -1,7 +1,7 @@
 # Modelowanie-Fizyczne
 
 CEL PROJEKTU: 
-Wyznaczanie własności pola prędkości i przyspieszenia elementu płynu oraz wykreślanie wykresów torów oraz linii prądu w danym przepływie płynu.
+Wyznaczanie własności pola prędkości oraz wykreślanie wykresów torów oraz linii prądu w danym przepływie płynu.
 
 OPIS ZJAWISKA:
 Pole prędkości określa prędkość przepływu płynu w każdym punkcie przestrzeni oraz posiada informacje o zmianach objętościowych ciała jak i zmianach zachodzących w danym polu.
@@ -27,7 +27,7 @@ WYKORZYSTYWANE NARZEDZIA:
 -PySimpleGUI
 
 OGÓLNY OPIS PROJEKTU I MOŻLIWE ALTERNATYWY:
-Projekt ma na celu wyznaczenie pola prędkości, przyspieszenia elementu płynu i jego własności takich jak rotacja, dywergencja i gradient pola prędkości, za pomocą wprowadzonych przez użytkownika danych do okienka pobierania programu oraz wyświetlenie okna z wykreślonymi torami oraz liniami prądu w danym przepływie. Altermatywą może być wykreślenie torów w przestrzeni trójwymiarowej.
+Projekt ma na celu wyznaczenie pola prędkości i jego własności takich jak rotacja, dywergencja pola prędkości, za pomocą wprowadzonych przez użytkownika danych do okienka pobierania programu oraz wyświetlenie okna z wykreślonymi torami oraz liniami prądu w danym przepływie. Altermatywą może być wykreślenie torów w przestrzeni trójwymiarowej.
 
 SPECYFICZNE WYMAGANIA:
 
@@ -40,8 +40,6 @@ Program ma:
 -wykreślać tor oraz linie prądu danego przepływu
 
 -sprawdzać czy dane pole prędkości istnieje
-
--wyznaczać przyspieszenie elementu płynu
 
 Wymagania niefunkcjonalne:
 
@@ -57,13 +55,13 @@ Program powinien:
 
 HARMONOGRAM PRAC:
 
-7.12 - napisanie kodu odpowiedzialnego za pojawianie się okienka do którego użytkownik wprowadza dane oraz wykreśalnie wykresów ma podstawie tych danych.
+7.12 - napisanie kodu odpowiedzialnego za pojawianie się okienka do którego użytkownik wprowadza dane oraz wykreślanie wykresów ma podstawie tych danych.
 
 14.12 - część kodu odpowiedzialna za obliczanie linii pola prędkości, torów i ich wykreślanie.
 
 21.12 - kod odpowiedzialny za określanie dywergencji, rotacji pola prędkości.
 
-4.01 - wyznaczanie przyspieszenia elementu płynu.
+4.01 - dodanie progressbaru
 
 11.01 - ostatnie poprawki i pozbywanie się ewentualnych błędów.
 
