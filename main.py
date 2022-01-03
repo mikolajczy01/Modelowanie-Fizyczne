@@ -139,29 +139,36 @@ sp.pprint(wynikx, use_unicode=True)
 sp.pprint(wyniky, use_unicode=True)
 sp.pprint(wynikz, use_unicode=True)
 
-progressbar=bar(8000,"Wykres rotacji")
+if(wynikx==0 and wyniky==0 and wynikz==0):
+    rotacja = 0
+else:
+    progressbar = bar(8000, "Wykres rotacji")
 
-for i in range(20):
-    for j in range(20):
-        for k in range(20):
-            U[i, j, k]=wynikx.subs({z: Z[i, j], y: Y[i, j],x: X[i,j]})
-            V[i, j, k]=wyniky.subs({z: Z[i, j], y: Y[i, j],x: X[i,j]})
-            W[i, j, k]=wynikz.subs({z: Z[i, j], y: Y[i, j],x: X[i,j]})
-            progressbar.Read(timeout=0)
-            progressbar['progressbar'].UpdateBar(i*400+j*20+k)
+    for i in range(20):
+        for j in range(20):
+            for k in range(20):
+                U[i, j, k] = wynikx.subs({z: Z[i, j], y: Y[i, j], x: X[i, j]})
+                V[i, j, k] = wyniky.subs({z: Z[i, j], y: Y[i, j], x: X[i, j]})
+                W[i, j, k] = wynikz.subs({z: Z[i, j], y: Y[i, j], x: X[i, j]})
+                progressbar.Read(timeout=0)
+                progressbar['progressbar'].UpdateBar(i * 400 + j * 20 + k)
 
-progressbar.close()
+    progressbar.close()
 
-skip=(slice(None,None,3),slice(None,None,3),slice(None,None,3))
-strm=ax0.quiver(X[skip],Y[skip],Z[skip],U[skip],V[skip],W[skip])
-ax0.set_title('Rotacja')
-ax0.grid(True)
+    skip = (slice(None, None, 3), slice(None, None, 3), slice(None, None, 3))
+    strm = ax0.quiver(X[skip], Y[skip], Z[skip], U[skip], V[skip], W[skip])
+    ax0.set_title('Rotacja')
+    ax0.grid(True)
+    rotacja = 1
 
 
 
 #okno wykresiory
 sg.theme('DarkBlue2')
-lista_wykresow = ["Linie prądu","Tor elementu płynu","Rotacja"]
+lista_wykresow = ["Linie prądu","Tor elementu płynu"]
+
+if(rotacja==1):
+    lista_wykresow.append("Rotacja")
 
 wybor_wykresu = [
     [sg.Text("Dostępne wykresy: ")],
