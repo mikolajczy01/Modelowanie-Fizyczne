@@ -61,7 +61,7 @@ HARMONOGRAM PRAC:
 
 21.12 - kod odpowiedzialny za określanie dywergencji, rotacji pola prędkości.
 
-4.01 - dodanie progressbaru
+4.01 - dodanie progressbaru i wykresu rotacji
 
 11.01 - ostatnie poprawki i pozbywanie się ewentualnych błędów.
 
