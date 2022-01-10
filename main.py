@@ -51,18 +51,21 @@ def div(ux,uy,uz=0):
     return A+B+C
 
 #okno pobieranie
-sg.theme('DarkBlue1')
-layout = [[sg.Text("Podaj Ux i Uy")],
-            [sg.Text("Ux ="),sg.InputText()],
-            [sg.Text("Uy ="),sg.InputText()],
-            # [sg.Text("Xo ="),sg.InputText()],
-            # [sg.Text("Yo ="),sg.InputText()],
-            [sg.Button('Dalej')]]
-window = sg.Window('Pole Prędkości', layout, finalize=True, element_justification='center',font='Helvetica 18')
+def okno_zycia():
+    sg.theme('DarkBlue1')
+    layout = [[sg.Text("Podaj Ux i Uy")],
+                [sg.Text("Ux ="),sg.InputText()],
+                [sg.Text("Uy ="),sg.InputText()],
+                # [sg.Text("Xo ="),sg.InputText()],
+                # [sg.Text("Yo ="),sg.InputText()],
+                [sg.Button('Dalej')]]
+    window = sg.Window('Pole Prędkości', layout, finalize=True, element_justification='center',font='Helvetica 18')
 
-event, wsp = window.read()
+    event, wsp = window.read()
 
-window.close()
+    window.close()
+
+    return wsp
 
 #WYKRESIORY
 
@@ -72,9 +75,18 @@ Y,X = np.mgrid[1:20:100j,1:20:100j]
 V,U = np.mgrid[1:20:100j,1:20:100j]
 diver,miver = np.mgrid[1:20:100j,1:20:100j]
 
-f = sp.integrate(1/sp.sympify(wsp[0]),x)
-g = sp.integrate(1/sp.sympify(wsp[1]),y)
-wynik = sp.sympify(sp.solve(sp.Eq(f,g),y))
+while(True):
+    try:
+        wsp = okno_zycia()
+        f = sp.integrate(1/sp.sympify(wsp[0]),x)
+        g = sp.integrate(1/sp.sympify(wsp[1]),y)
+        wynik = sp.sympify(sp.solve(sp.Eq(f,g),y))
+    except TypeError:
+        exit()
+    except:
+        pass
+    else:
+        break
 
 sp.pprint(f, use_unicode=True)
 sp.pprint(g, use_unicode=True)
