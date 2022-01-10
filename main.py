@@ -84,7 +84,15 @@ while(True):
     except TypeError:
         exit()
     except:
-        pass
+        sg.theme('DarkBlue1')
+        layout=[[sg.Text("Error 404")],
+                [sg.Text("Wpisz nowe dane")],
+                [sg.Button('OK')]]
+        window2=sg.Window('Pole Prędkości', layout,finalize=True, element_justification='center', font='Helvetica 20')
+        event = window2.read()
+        if event==sg.WIN_CLOSED:
+
+        window2.close()
     else:
         break
 
