@@ -63,6 +63,6 @@ HARMONOGRAM PRAC:
 
 4.01 - dodanie progressbaru i wykresu rotacji
 
-11.01 - ostatnie poprawki i pozbywanie się ewentualnych błędów.
+11.01 - obsługa wyjątków.
 
 ![Cython-logo svg](https://user-images.githubusercontent.com/47851742/143024239-0f85ac56-0081-4363-85c5-e1faa60692f4.png)
