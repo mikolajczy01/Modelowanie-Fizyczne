@@ -90,9 +90,11 @@ while(True):
                 [sg.Button('OK')]]
         window2=sg.Window('Pole Prędkości', layout,finalize=True, element_justification='center', font='Helvetica 20')
         event = window2.read()
-        if event==sg.WIN_CLOSED:
-
-        window2.close()
+        if event==sg.WIN_CLOSED or event == "Cancle":
+            window2.close()
+            exit()
+        if event == 'OK':
+            window2.close()
     else:
         break
 
