@@ -5,6 +5,9 @@ import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import matplotlib
 
+#ciekawe przypadki
+#xy xy, xy x,
+
 matplotlib.use('TkAgg')
 
 x,y,z = sp.symbols('x y z')
@@ -36,15 +39,15 @@ def delete_fig_agg(fig_agg):
 
 #rotacja
 def rotX(uy,uz=0):
-    A = sp.diff(sp.sympify(uz),y)-sp.diff(sp.sympify(uy),z)
+    A = sp.sympify(sp.diff(sp.sympify(uz),y)-sp.diff(sp.sympify(uy),z))
     return A
 
 def rotY(ux,uz=0):
-    B = sp.diff(sp.sympify(ux), z) - sp.diff(sp.sympify(uz), x)
+    B = sp.sympify(sp.diff(sp.sympify(ux), z) - sp.diff(sp.sympify(uz), x))
     return B
 
 def rotZ(ux,uy):
-    C = sp.diff(sp.sympify(uy), x) - sp.diff(sp.sympify(ux), y)
+    C = sp.sympify(sp.diff(sp.sympify(uy), x) - sp.diff(sp.sympify(ux), y))
     return C
 
 #dywergencja
@@ -82,8 +85,6 @@ def blad():
     window2.read()
     window2.close()
 
-
-
 #WYKRESY
 
 #wykres linii prądu
@@ -92,6 +93,7 @@ V,U = np.mgrid[1:20:100j,1:20:100j]
 diver,miver = np.mgrid[1:20:100j,1:20:100j]
 
 #kontrola bledow przy wprowadzaniu danych
+
 while(True):
     try:
         wsp = okno_wprowadzania()
@@ -119,7 +121,9 @@ fig1 = plt.figure(figsize=(12, 7), dpi=200)
 
 ax0 = fig1.add_subplot(1,1,1)
 strm = ax0.streamplot(X, Y, X, V, density=1,color=diver,cmap='winter',linewidth=1)
-fig1.colorbar(strm.lines)
+fig1.colorbar(strm.lines,label = 'Dywergencja')
+ax0.set_xlabel('X')
+ax0.set_ylabel('Y')
 ax0.set_title('Linie prądu')
 ax0.grid(True)
 
@@ -134,9 +138,9 @@ wynik = sp.sympify(sp.solve(sp.Eq(f,g),y))
 progressbar = bar(100, "Wykres toru ruchu")
 
 for i in range(100):
-        Y[i]=wynik[0].subs({x: X[i]})
-        progressbar.Read(timeout=0)
-        progressbar['progressbar'].UpdateBar(i)
+    Y[i]=wynik[0].subs({x: X[i]})
+    progressbar.Read(timeout=0)
+    progressbar['progressbar'].UpdateBar(i)
 
 progressbar.close()
 
@@ -145,6 +149,10 @@ fig2 = plt.figure(figsize=(12, 7), dpi=200)
 ax0 = fig2.add_subplot(1,1,1)
 strm = ax0.plot(X, Y)
 ax0.set_title('Tor elementu płynu')
+ax0.set_xticks(range(1,21))
+ax0.set_yticks(range(1,21))
+ax0.set_xlabel('X')
+ax0.set_ylabel('Y')
 ax0.grid(True)
 
 #wykres roatcji
@@ -153,6 +161,7 @@ wynikx = sp.sympify(rotX(wsp[1]))
 wyniky = sp.sympify(rotY(wsp[0]))
 wynikz = sp.sympify(rotZ(wsp[0],wsp[1]))
 
+#jesli rotacja istnieje to program wygeneruje jej wykres
 if(wynikx==0 and wyniky==0 and wynikz==0):
 
     rotacja = 0
@@ -170,18 +179,25 @@ else:
     for i in range(20):
         for j in range(20):
             for k in range(20):
-                U[i, j, k] = wynikx.subs({z: Z[i, j], y: Y[i, j], x: X[i, j]})
-                V[i, j, k] = wyniky.subs({z: Z[i, j], y: Y[i, j], x: X[i, j]})
-                W[i, j, k] = wynikz.subs({z: Z[i, j], y: Y[i, j], x: X[i, j]})
+                U[i, j, k] = wynikx.subs({z: Z[i, j, k], y: Y[i, j, k], x: X[i, j, k]})
+                V[i, j, k] = wyniky.subs({z: Z[i, j, k], y: Y[i, j, k], x: X[i, j, k]})
+                W[i, j, k] = wynikz.subs({z: Z[i, j, k], y: Y[i, j, k], x: X[i, j, k]})
                 progressbar.Read(timeout=0)
                 progressbar['progressbar'].UpdateBar(i * 400 + j * 20 + k)
 
     progressbar.close()
 
-    skip = (slice(None, None, 3), slice(None, None, 3), slice(None, None, 3))
+    skip = (slice(None, None, 5), slice(None, None, 5), slice(None, None, 5))
     strm = ax0.quiver(X[skip], Y[skip], Z[skip], U[skip], V[skip], W[skip])
     ax0.set_title('Rotacja')
+    ax0.set_xlabel('X')
+    ax0.set_ylabel('Y')
+    ax0.set_zlabel('Z')
+    ax0.set_xticks(range(1, 21, 2))
+    ax0.set_yticks(range(1, 21, 2))
+    ax0.set_zticks(range(1, 21, 2))
     ax0.grid(True)
+
     rotacja = 1
 
 #okno wykresow
