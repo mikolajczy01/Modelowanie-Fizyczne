@@ -22,12 +22,14 @@ def bar(n,nazwa):
     window = sg.Window('Pole prędkości', layout,no_titlebar=True, alpha_channel=1, grab_anywhere=True)
     return window
 
-def draw_figure(canvas, figure, loc=(0, 0)):
+#rysowanie wykresow na canvasie
+def draw_figure(canvas, figure):
     figure_canvas_agg = FigureCanvasTkAgg(figure, canvas)
     figure_canvas_agg.draw()
     figure_canvas_agg.get_tk_widget().pack(side='top', fill='both', expand=1)
     return figure_canvas_agg
 
+#usuwanie wykresow z canvasu
 def delete_fig_agg(fig_agg):
     fig_agg.get_tk_widget().forget()
     fig_agg.get_tk_widget().delete('all')
@@ -53,7 +55,7 @@ def div(ux,uy,uz=0):
     return A+B+C
 
 #okno pobierania wzorow
-def okno_zycia():
+def okno_wprowadzania():
     sg.theme('DarkBlue1')
     layout = [[sg.Text("Podaj Ux i Uy")],
                 [sg.Text("Ux ="),sg.InputText()],
@@ -89,9 +91,10 @@ Y,X = np.mgrid[1:20:100j,1:20:100j]
 V,U = np.mgrid[1:20:100j,1:20:100j]
 diver,miver = np.mgrid[1:20:100j,1:20:100j]
 
+#kontrola bledow przy wprowadzaniu danych
 while(True):
     try:
-        wsp = okno_zycia()
+        wsp = okno_wprowadzania()
         f = sp.integrate(1/sp.sympify(wsp[0]),x)
         g = sp.integrate(1/sp.sympify(wsp[1]),y)
         wynik = sp.sympify(sp.solve(sp.Eq(f,g),y))
@@ -111,6 +114,7 @@ while(True):
     else:
         break
 
+
 fig1 = plt.figure(figsize=(12, 7), dpi=200)
 
 ax0 = fig1.add_subplot(1,1,1)
@@ -127,7 +131,7 @@ f = sp.integrate(1/sp.sympify(wsp[0]),x)
 g = sp.integrate(1/sp.sympify(wsp[1]),y)
 wynik = sp.sympify(sp.solve(sp.Eq(f,g),y))
 
-progressbar=bar(100, "Wykres toru ruchu")
+progressbar = bar(100, "Wykres toru ruchu")
 
 for i in range(100):
         Y[i]=wynik[0].subs({x: X[i]})
@@ -144,19 +148,23 @@ ax0.set_title('Tor elementu płynu')
 ax0.grid(True)
 
 #wykres roatcji
-fig3 = plt.figure(figsize=(12,7),dpi=200)
-
-ax0 = fig3.add_subplot(1,1,1,projection='3d')
-X,Y,Z = np.meshgrid(np.arange(1,21),np.arange(1,21),np.arange(1,21))
-U,V,W = np.meshgrid(np.arange(1,21),np.arange(1,21),np.arange(1,21))
 
 wynikx = sp.sympify(rotX(wsp[1]))
 wyniky = sp.sympify(rotY(wsp[0]))
 wynikz = sp.sympify(rotZ(wsp[0],wsp[1]))
 
 if(wynikx==0 and wyniky==0 and wynikz==0):
+
     rotacja = 0
+
 else:
+
+    fig3 = plt.figure(figsize=(12, 7), dpi=200)
+
+    ax0 = fig3.add_subplot(1, 1, 1, projection='3d')
+    X, Y, Z = np.meshgrid(np.arange(1, 21), np.arange(1, 21), np.arange(1, 21))
+    U, V, W = np.meshgrid(np.arange(1, 21), np.arange(1, 21), np.arange(1, 21))
+
     progressbar = bar(8000, "Wykres rotacji")
 
     for i in range(20):
@@ -185,9 +193,12 @@ if(rotacja==1):
     lista_wykresow.append("Rotacja")
 
 wybor_wykresu = [
+    [sg.HSeparator()],
     [sg.Text("Wykresy funkcji: ")],
     [sg.Text("Ux = " + str(wsp[0]))],
     [sg.Text("Uy = " + str(wsp[1]))],
+    [sg.HSeparator()],
+    [sg.Text("")],
     [sg.Text("Dostępne wykresy: ")],
     [sg.Listbox(values=lista_wykresow, enable_events=True, size=(40, 20), key="-WYKRESY-")]
 ]
