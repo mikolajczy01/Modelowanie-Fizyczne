@@ -4,10 +4,11 @@ import PySimpleGUI as sg
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import matplotlib
-#JD
+
 matplotlib.use('TkAgg')
-sp.init_printing()
+
 x,y,z = sp.symbols('x y z')
+
 #progressbar
 def bar(n,nazwa):
     sg.theme('DarkGrey8')
@@ -31,6 +32,7 @@ def delete_fig_agg(fig_agg):
     fig_agg.get_tk_widget().forget()
     fig_agg.get_tk_widget().delete('all')
 
+#rotacja
 def rotX(uy,uz=0):
     A = sp.diff(sp.sympify(uz),y)-sp.diff(sp.sympify(uy),z)
     return A
@@ -43,13 +45,14 @@ def rotZ(ux,uy):
     C = sp.diff(sp.sympify(uy), x) - sp.diff(sp.sympify(ux), y)
     return C
 
+#dywergencja
 def div(ux,uy,uz=0):
     A = sp.diff(sp.sympify(ux),x)
     B = sp.diff(sp.sympify(uy),y)
     C = sp.diff(sp.sympify(uz),z)
     return A+B+C
 
-#okno pobieranie
+#okno pobierania wzorow
 def okno_zycia():
     sg.theme('DarkBlue1')
     layout = [[sg.Text("Podaj Ux i Uy")],
@@ -67,7 +70,7 @@ def okno_zycia():
 
     return wsp
 
-
+#okno bledu
 def blad():
     sg.theme('DarkBlue1')
     layout = [[sg.Text("Error 404")],
@@ -77,10 +80,11 @@ def blad():
     window2.read()
     window2.close()
 
-#WYKRESIORY
 
 
-# wykres linii prądu
+#WYKRESY
+
+#wykres linii prądu
 Y,X = np.mgrid[1:20:100j,1:20:100j]
 V,U = np.mgrid[1:20:100j,1:20:100j]
 diver,miver = np.mgrid[1:20:100j,1:20:100j]
@@ -107,12 +111,6 @@ while(True):
     else:
         break
 
-sp.pprint(f, use_unicode=True)
-print("XXXXXX")
-sp.pprint(g, use_unicode=True)
-print("XXXXXX")
-sp.pprint(wynik[0], use_unicode=True)
-
 fig1 = plt.figure(figsize=(12, 7), dpi=200)
 
 ax0 = fig1.add_subplot(1,1,1)
@@ -122,7 +120,6 @@ ax0.set_title('Linie prądu')
 ax0.grid(True)
 
 #wykres toru
-
 X=np.linspace(1,20,100)
 Y=np.linspace(1,20,100)
 
@@ -157,10 +154,6 @@ wynikx = sp.sympify(rotX(wsp[1]))
 wyniky = sp.sympify(rotY(wsp[0]))
 wynikz = sp.sympify(rotZ(wsp[0],wsp[1]))
 
-sp.pprint(wynikx, use_unicode=True)
-sp.pprint(wyniky, use_unicode=True)
-sp.pprint(wynikz, use_unicode=True)
-
 if(wynikx==0 and wyniky==0 and wynikz==0):
     rotacja = 0
 else:
@@ -183,16 +176,18 @@ else:
     ax0.grid(True)
     rotacja = 1
 
-
-
-#okno wykresiory
+#okno wykresow
 sg.theme('DarkBlue2')
+
 lista_wykresow = ["Linie prądu","Tor elementu płynu"]
 
 if(rotacja==1):
     lista_wykresow.append("Rotacja")
 
 wybor_wykresu = [
+    [sg.Text("Wykresy funkcji: ")],
+    [sg.Text("Ux = " + str(wsp[0]))],
+    [sg.Text("Uy = " + str(wsp[1]))],
     [sg.Text("Dostępne wykresy: ")],
     [sg.Listbox(values=lista_wykresow, enable_events=True, size=(40, 20), key="-WYKRESY-")]
 ]
@@ -210,7 +205,7 @@ layout = [
     [sg.Button('Exit')]
 ]
 
-window = sg.Window('Pole Prędkości', layout, finalize=True, element_justification='center',font='Helvetica 18',location=(0, 0),resizable=True)
+window = sg.Window('Pole Prędkości', layout, finalize=True,font='Helvetica 18',location=(0, 0),resizable=True)
 
 window["-WYKRESY-"].update(set_to_index=0)
 
@@ -220,7 +215,7 @@ while True:
 
     event, values = window.read()
 
-    if event == "Exit" or event == sg.WIN_CLOSED:
+    if event == sg.WIN_CLOSED:
         break
 
     if event == '-WYKRESY-':
@@ -233,4 +228,5 @@ while True:
             fig_agg = draw_figure(window['-CANVAS-'].TKCanvas, fig2)
         elif(values['-WYKRESY-'][0]=="Rotacja"):
             fig_agg = draw_figure(window['-CANVAS-'].TKCanvas, fig3)
+
 window.close()
