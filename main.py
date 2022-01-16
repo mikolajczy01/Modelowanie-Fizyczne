@@ -8,7 +8,6 @@ import matplotlib
 matplotlib.use('TkAgg')
 sp.init_printing()
 x,y,z = sp.symbols('x y z')
-
 #progressbar
 def bar(n,nazwa):
     sg.theme('DarkGrey8')
@@ -56,16 +55,27 @@ def okno_zycia():
     layout = [[sg.Text("Podaj Ux i Uy")],
                 [sg.Text("Ux ="),sg.InputText()],
                 [sg.Text("Uy ="),sg.InputText()],
-                # [sg.Text("Xo ="),sg.InputText()],
-                # [sg.Text("Yo ="),sg.InputText()],
                 [sg.Button('Dalej')]]
     window = sg.Window('Pole Prędkości', layout, finalize=True, element_justification='center',font='Helvetica 18')
 
     event, wsp = window.read()
 
+    if event == sg.WIN_CLOSED:
+        exit()
+
     window.close()
 
     return wsp
+
+
+def blad():
+    sg.theme('DarkBlue1')
+    layout = [[sg.Text("Error 404")],
+              [sg.Text("Wpisz nowe dane")],
+              [sg.Button('OK')]]
+    window2 = sg.Window('Pole Prędkości', layout, finalize=True, element_justification='center', font='Helvetica 20')
+    window2.read()
+    window2.close()
 
 #WYKRESIORY
 
@@ -81,37 +91,27 @@ while(True):
         f = sp.integrate(1/sp.sympify(wsp[0]),x)
         g = sp.integrate(1/sp.sympify(wsp[1]),y)
         wynik = sp.sympify(sp.solve(sp.Eq(f,g),y))
-    except TypeError:
-        exit()
-    except:
-        sg.theme('DarkBlue1')
-        layout=[[sg.Text("Error 404")],
-                [sg.Text("Wpisz nowe dane")],
-                [sg.Button('OK')]]
-        window2=sg.Window('Pole Prędkości', layout,finalize=True, element_justification='center', font='Helvetica 20')
-        event = window2.read()
-        if event==sg.WIN_CLOSED or event == "Cancle":
-            window2.close()
-            exit()
-        if event == 'OK':
-            window2.close()
+
+        progressbar = bar(10000, "Wykres linii pola")
+
+        for i in range(100):
+            for j in range(100):
+                V[i, j] = wynik[0].subs({x: X[i, j]})
+                diver[i, j] = sp.sympify(div(wsp[0], wsp[1])).subs({x: X[i, j], y: Y[i, j]})
+                progressbar.Read(timeout=0)
+                progressbar['progressbar'].UpdateBar(i * 100 + j)
+
+        progressbar.close()
+    except Exception:
+        blad()
     else:
         break
 
 sp.pprint(f, use_unicode=True)
+print("XXXXXX")
 sp.pprint(g, use_unicode=True)
+print("XXXXXX")
 sp.pprint(wynik[0], use_unicode=True)
-
-progressbar=bar(10000,"Wykres linii pola")
-
-for i in range(100):
-    for j in range(100):
-        V[i, j] = wynik[0].subs({x: X[i, j]})
-        diver[i, j] = sp.sympify(div(wsp[0], wsp[1])).subs({x: X[i, j], y: Y[i, j]})
-        progressbar.Read(timeout=0)
-        progressbar['progressbar'].UpdateBar(i*100+j)
-
-progressbar.close()
 
 fig1 = plt.figure(figsize=(12, 7), dpi=200)
 
