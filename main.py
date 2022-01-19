@@ -6,7 +6,7 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import matplotlib
 
 #ciekawe przypadki
-#xy xy, xy x,
+#xy xy, xy x, x^2 -y^2 dywergecja, sin(x) cos(y)
 
 matplotlib.use('TkAgg')
 
@@ -96,12 +96,15 @@ diver,miver = np.mgrid[1:20:100j,1:20:100j]
 
 while(True):
     try:
+
         wsp = okno_wprowadzania()
+
+        progressbar = bar(10000, "Wykres linii pola")
+
         f = sp.integrate(1/sp.sympify(wsp[0]),x)
         g = sp.integrate(1/sp.sympify(wsp[1]),y)
         wynik = sp.sympify(sp.solve(sp.Eq(f,g),y))
 
-        progressbar = bar(10000, "Wykres linii pola")
 
         for i in range(100):
             for j in range(100):
@@ -112,6 +115,7 @@ while(True):
 
         progressbar.close()
     except Exception:
+        progressbar.close()
         blad()
     else:
         break
@@ -149,8 +153,6 @@ fig2 = plt.figure(figsize=(12, 7), dpi=200)
 ax0 = fig2.add_subplot(1,1,1)
 strm = ax0.plot(X, Y)
 ax0.set_title('Tor elementu płynu')
-ax0.set_xticks(range(1,21))
-ax0.set_yticks(range(1,21))
 ax0.set_xlabel('X')
 ax0.set_ylabel('Y')
 ax0.grid(True)
