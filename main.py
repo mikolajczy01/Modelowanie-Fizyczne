@@ -127,6 +127,7 @@ while(True):
         break
 
 sp.pprint(wynik[0])
+
 progressbar = bar(400, "Wykres linii pola")
 divvar = sp.sympify(div(wsp[0], wsp[1]))
 
@@ -212,9 +213,9 @@ else:
         for j in range(20):
             for k in range(20):
                 try:
-                    U[i, j, k] = wynikx.subs({z: Z[i, j, k], y: Y[i, j, k], x: X[i, j, k]})
-                    V[i, j, k] = wyniky.subs({z: Z[i, j, k], y: Y[i, j, k], x: X[i, j, k]})
-                    W[i, j, k] = wynikz.subs({z: Z[i, j, k], y: Y[i, j, k], x: X[i, j, k]})
+                    U[i, j, k] = wynikx.subs({z: Z[i, j, k], roty: Y[i, j, k], x: X[i, j, k]})
+                    V[i, j, k] = wyniky.subs({z: Z[i, j, k], roty: Y[i, j, k], x: X[i, j, k]})
+                    W[i, j, k] = wynikz.subs({z: Z[i, j, k], roty: Y[i, j, k], x: X[i, j, k]})
                 except Exception:
                     U[i, j, k]=0
                     V[i, j, k]=0
@@ -238,7 +239,7 @@ else:
 sg.theme('DarkBlue2')
 
 for i,j in wsp.items():
-    wsp[i]=j.replace('roty','y')
+    wsp[i]=j.replace('y(x)','y')
 
 lista_wykresow = ["Linie prądu","Tor elementu płynu"]
 
