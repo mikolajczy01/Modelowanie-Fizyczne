@@ -10,7 +10,11 @@ import matplotlib
 
 matplotlib.use('TkAgg')
 
-x,y,z = sp.symbols('x y z')
+# x,y,z = sp.symbols('x y z')
+
+x,z,roty = sp.symbols('x z roty')
+y = sp.Function("y")(x)
+C1 = sp.Symbol('C1')
 
 #progressbar
 def bar(n,nazwa):
@@ -38,22 +42,30 @@ def delete_fig_agg(fig_agg):
     fig_agg.get_tk_widget().delete('all')
 
 #rotacja
-def rotX(uy,uz=0):
-    A = sp.sympify(sp.diff(sp.sympify(uz),y)-sp.diff(sp.sympify(uy),z))
+def rotX(uy,uz='0'):
+    uz = uz.replace('y(x)', 'roty')
+    uy = uy.replace('y(x)', 'roty')
+    A = sp.sympify(sp.diff(sp.sympify(uz),roty)-sp.diff(sp.sympify(uy),z))
     return A
 
-def rotY(ux,uz=0):
+def rotY(ux,uz='0'):
+    ux = ux.replace('y(x)', 'roty')
+    uz = uz.replace('y(x)', 'roty')
     B = sp.sympify(sp.diff(sp.sympify(ux), z) - sp.diff(sp.sympify(uz), x))
     return B
 
 def rotZ(ux,uy):
-    C = sp.sympify(sp.diff(sp.sympify(uy), x) - sp.diff(sp.sympify(ux), y))
+    ux = ux.replace('y(x)', 'roty')
+    uy = uy.replace('y(x)', 'roty')
+    C = sp.sympify(sp.diff(sp.sympify(uy), x) - sp.diff(sp.sympify(ux), roty))
     return C
 
 #dywergencja
 def div(ux,uy,uz=0):
+    ux = ux.replace('y(x)', 'roty')
+    uy = uy.replace('y(x)', 'roty')
     A = sp.diff(sp.sympify(ux),x)
-    B = sp.diff(sp.sympify(uy),y)
+    B = sp.diff(sp.sympify(uy),roty)
     C = sp.diff(sp.sympify(uz),z)
     return A+B+C
 
@@ -88,9 +100,10 @@ def blad():
 #WYKRESY
 
 #wykres linii prądu
-Y,X = np.mgrid[1:20:100j,1:20:100j]
-V,U = np.mgrid[1:20:100j,1:20:100j]
-diver,miver = np.mgrid[1:20:100j,1:20:100j]
+Y, X = np.mgrid[-10:10:21j, -10:10:21j]
+V,U =  np.mgrid[-10:10:21j, -10:10:21j]
+diver,miver = np.meshgrid(np.zeros(21), np.zeros(21))
+
 
 #kontrola bledow przy wprowadzaniu danych
 
@@ -99,32 +112,49 @@ while(True):
 
         wsp = okno_wprowadzania()
 
-        progressbar = bar(10000, "Wykres linii pola")
+        for i, j in wsp.items():
+            wsp[i] = j.replace('y', 'y(x)')
 
-        f = sp.integrate(1/sp.sympify(wsp[0]),x)
-        g = sp.integrate(1/sp.sympify(wsp[1]),y)
-        wynik = sp.sympify(sp.solve(sp.Eq(f,g),y))
+        pochodna = sp.Derivative(y)
+        rownanie = sp.Eq(pochodna / sp.sympify(wsp[1]), 1 / sp.sympify(wsp[0]))
+        wynik = sp.solve(sp.dsolve(rownanie, y), y)
 
-
-        for i in range(100):
-            for j in range(100):
-                V[i, j] = wynik[0].subs({x: X[i, j]})
-                diver[i, j] = sp.sympify(div(wsp[0], wsp[1])).subs({x: X[i, j], y: Y[i, j]})
-                progressbar.Read(timeout=0)
-                progressbar['progressbar'].UpdateBar(i * 100 + j)
-
-        progressbar.close()
+        if(wynik == []):
+            raise NameError('pusta tablica')
     except Exception:
-        progressbar.close()
         blad()
     else:
         break
 
+sp.pprint(wynik[0])
+progressbar = bar(400, "Wykres linii pola")
+divvar = sp.sympify(div(wsp[0], wsp[1]))
+
+for i in range(21):
+    for j in range(21):
+
+        try:
+            V[i, j] = wynik[0].subs({x: U[j, i],C1: 1})
+        except Exception:
+            V[i, j]=0
+            U[i, j]=0
+        finally:
+            diver[i, j] = divvar.subs({x: X[i,j], roty: Y[i,j]})
+            progressbar.Read(timeout=0)
+            progressbar['progressbar'].UpdateBar(i * 50 + j)
+
+progressbar.close()
 
 fig1 = plt.figure(figsize=(12, 7), dpi=200)
 
 ax0 = fig1.add_subplot(1,1,1)
-strm = ax0.streamplot(X, Y, X, V, density=1,color=diver,cmap='winter',linewidth=1)
+
+try:
+    strm = ax0.streamplot(X, Y, U, V, density=1,color=diver,cmap='winter',linewidth=1)
+except Exception:
+    blad()
+    exit()
+
 fig1.colorbar(strm.lines,label = 'Dywergencja')
 ax0.set_xlabel('X')
 ax0.set_ylabel('Y')
@@ -132,17 +162,17 @@ ax0.set_title('Linie prądu')
 ax0.grid(True)
 
 #wykres toru
-X=np.linspace(1,20,100)
-Y=np.linspace(1,20,100)
+X=np.linspace(-10,10,21)
+Y=np.linspace(-10,10,21)
 
-f = sp.integrate(1/sp.sympify(wsp[0]),x)
-g = sp.integrate(1/sp.sympify(wsp[1]),y)
-wynik = sp.sympify(sp.solve(sp.Eq(f,g),y))
+progressbar = bar(21, "Wykres toru ruchu")
 
-progressbar = bar(100, "Wykres toru ruchu")
-
-for i in range(100):
-    Y[i]=wynik[0].subs({x: X[i]})
+for i in range(21):
+    try:
+        Y[i]=wynik[0].subs({x: X[i], C1:1})
+    except Exception:
+        Y[i]=0
+        X[i]=0
     progressbar.Read(timeout=0)
     progressbar['progressbar'].UpdateBar(i)
 
@@ -173,17 +203,22 @@ else:
     fig3 = plt.figure(figsize=(12, 7), dpi=200)
 
     ax0 = fig3.add_subplot(1, 1, 1, projection='3d')
-    X, Y, Z = np.meshgrid(np.arange(1, 21), np.arange(1, 21), np.arange(1, 21))
-    U, V, W = np.meshgrid(np.arange(1, 21), np.arange(1, 21), np.arange(1, 21))
+    X, Y, Z = np.meshgrid(np.arange(-10, 10), np.arange(-10, 10), np.arange(-10, 10))
+    U, V, W = np.meshgrid(np.arange(-10, 10), np.arange(-10, 10), np.arange(-10, 10))
 
     progressbar = bar(8000, "Wykres rotacji")
 
     for i in range(20):
         for j in range(20):
             for k in range(20):
-                U[i, j, k] = wynikx.subs({z: Z[i, j, k], y: Y[i, j, k], x: X[i, j, k]})
-                V[i, j, k] = wyniky.subs({z: Z[i, j, k], y: Y[i, j, k], x: X[i, j, k]})
-                W[i, j, k] = wynikz.subs({z: Z[i, j, k], y: Y[i, j, k], x: X[i, j, k]})
+                try:
+                    U[i, j, k] = wynikx.subs({z: Z[i, j, k], y: Y[i, j, k], x: X[i, j, k]})
+                    V[i, j, k] = wyniky.subs({z: Z[i, j, k], y: Y[i, j, k], x: X[i, j, k]})
+                    W[i, j, k] = wynikz.subs({z: Z[i, j, k], y: Y[i, j, k], x: X[i, j, k]})
+                except Exception:
+                    U[i, j, k]=0
+                    V[i, j, k]=0
+                    W[i, j, k]=0
                 progressbar.Read(timeout=0)
                 progressbar['progressbar'].UpdateBar(i * 400 + j * 20 + k)
 
@@ -195,15 +230,15 @@ else:
     ax0.set_xlabel('X')
     ax0.set_ylabel('Y')
     ax0.set_zlabel('Z')
-    ax0.set_xticks(range(1, 21, 2))
-    ax0.set_yticks(range(1, 21, 2))
-    ax0.set_zticks(range(1, 21, 2))
     ax0.grid(True)
 
     rotacja = 1
 
 #okno wykresow
 sg.theme('DarkBlue2')
+
+for i,j in wsp.items():
+    wsp[i]=j.replace('roty','y')
 
 lista_wykresow = ["Linie prądu","Tor elementu płynu"]
 
