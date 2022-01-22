@@ -194,7 +194,7 @@ progressbar = bar(21*21, "Wykres dywergencji")
 for i in range(21):
     for j in range(21):
         try:
-            diver[i, j] = divvar.subs({x: X[i, j], roty: Y[i, j]})
+            diver[i, j] = divvar.subs({x: X[i, j], roty: Y[20-i, j]})
         except Exception:
             diver[i, j] = np.NaN
         finally:
@@ -203,8 +203,8 @@ for i in range(21):
 
 progressbar.close()
 
-strm = ax0.streamplot(X, Y, X ,Y, density=2,color=diver,cmap='winter',linewidth=1)
-fig4.colorbar(strm.lines,label = 'Dywergencja')
+strm = ax0.imshow(diver,extent=[-10,10,-10,10])
+plt.colorbar(strm)
 ax0.set_title('Dywergencja')
 ax0.set_xlabel('X')
 ax0.set_ylabel('Y')
