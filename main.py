@@ -99,14 +99,6 @@ def blad():
 
 #WYKRESY
 
-#wykres linii prądu
-Y, X = np.mgrid[-10:10:21j, -10:10:21j]
-V,U =  np.mgrid[-10:10:21j, -10:10:21j]
-diver,miver = np.meshgrid(np.zeros(21), np.zeros(21))
-
-
-#kontrola bledow przy wprowadzaniu danych
-
 while(True):
     try:
 
@@ -126,23 +118,24 @@ while(True):
     else:
         break
 
-sp.pprint(wynik[0])
+#wykres linii prądu
+Y, X = np.mgrid[-10:10:21j, -10:10:21j]
 
-progressbar = bar(400, "Wykres linii pola")
-divvar = sp.sympify(div(wsp[0], wsp[1]))
+progressbar = bar(21*21, "Wykres linii pola")
+
+c=[l for l in range(-10,10)]
 
 for i in range(21):
     for j in range(21):
 
         try:
-            V[i, j] = wynik[0].subs({x: U[j, i],C1: 1})
+            Y[i, j] = wynik[0].subs({x: X[i, j], C1:c[i%21]})
         except Exception:
-            V[i, j]=0
-            U[i, j]=0
+            Y[i, j]=np.NaN
+            X[i, j]=np.NaN
         finally:
-            diver[i, j] = divvar.subs({x: X[i,j], roty: Y[i,j]})
             progressbar.Read(timeout=0)
-            progressbar['progressbar'].UpdateBar(i * 50 + j)
+            progressbar['progressbar'].UpdateBar(i * 21 + j)
 
 progressbar.close()
 
@@ -150,32 +143,30 @@ fig1 = plt.figure(figsize=(12, 7), dpi=200)
 
 ax0 = fig1.add_subplot(1,1,1)
 
-try:
-    strm = ax0.streamplot(X, Y, U, V, density=1,color=diver,cmap='winter',linewidth=1)
-except Exception:
-    blad()
-    exit()
+for i in range(21):
+        ax0.plot(X[i], Y[i])
 
-fig1.colorbar(strm.lines,label = 'Dywergencja')
 ax0.set_xlabel('X')
 ax0.set_ylabel('Y')
+ax0.set_xlim(-10,10)
+ax0.set_ylim(-10,10)
 ax0.set_title('Linie prądu')
 ax0.grid(True)
 
 #wykres toru
-X=np.linspace(-10,10,21)
-Y=np.linspace(-10,10,21)
+X=np.linspace(-10,10,41)
+Y=np.linspace(-10,10,41)
 
-progressbar = bar(21, "Wykres toru ruchu")
+progressbar = bar(41, "Wykres toru ruchu")
 
-for i in range(21):
+for i in range(41):
     try:
         Y[i]=wynik[0].subs({x: X[i], C1:1})
     except Exception:
-        Y[i]=0
-        X[i]=0
-    progressbar.Read(timeout=0)
-    progressbar['progressbar'].UpdateBar(i)
+        Y[i]=np.NaN
+    finally:
+        progressbar.Read(timeout=0)
+        progressbar['progressbar'].UpdateBar(i)
 
 progressbar.close()
 
@@ -187,6 +178,38 @@ ax0.set_title('Tor elementu płynu')
 ax0.set_xlabel('X')
 ax0.set_ylabel('Y')
 ax0.grid(True)
+
+#wykres dywergencji
+
+Y, X = np.mgrid[-10:10:21j, -10:10:21j]
+diver,miver = np.meshgrid(np.zeros(21), np.zeros(21))
+
+fig4 = plt.figure(figsize=(12, 7), dpi=200)
+ax0 = fig4.add_subplot(1,1,1)
+
+divvar = sp.sympify(div(wsp[0], wsp[1]))
+
+progressbar = bar(21*21, "Wykres dywergencji")
+
+for i in range(21):
+    for j in range(21):
+        try:
+            diver[i, j] = divvar.subs({x: X[i, j], roty: Y[i, j]})
+        except Exception:
+            diver[i, j] = np.NaN
+        finally:
+            progressbar.Read(timeout=0)
+            progressbar['progressbar'].UpdateBar(i * 21 + j)
+
+progressbar.close()
+
+strm = ax0.streamplot(X, Y, X ,Y, density=2,color=diver,cmap='winter',linewidth=1)
+fig4.colorbar(strm.lines,label = 'Dywergencja')
+ax0.set_title('Dywergencja')
+ax0.set_xlabel('X')
+ax0.set_ylabel('Y')
+ax0.grid(True)
+
 
 #wykres roatcji
 
@@ -204,24 +227,24 @@ else:
     fig3 = plt.figure(figsize=(12, 7), dpi=200)
 
     ax0 = fig3.add_subplot(1, 1, 1, projection='3d')
-    X, Y, Z = np.meshgrid(np.arange(-10, 10), np.arange(-10, 10), np.arange(-10, 10))
-    U, V, W = np.meshgrid(np.arange(-10, 10), np.arange(-10, 10), np.arange(-10, 10))
+    X, Y, Z = np.meshgrid(np.linspace(-10, 10, 21), np.linspace(-10, 10, 21), np.linspace(-10, 10, 21))
+    U, V, W = np.meshgrid(np.linspace(-10, 10, 21), np.linspace(-10, 10, 21), np.linspace(-10, 10, 21))
 
-    progressbar = bar(8000, "Wykres rotacji")
+    progressbar = bar(21*21*21, "Wykres rotacji")
 
-    for i in range(20):
-        for j in range(20):
-            for k in range(20):
+    for i in range(21):
+        for j in range(21):
+            for k in range(21):
                 try:
                     U[i, j, k] = wynikx.subs({z: Z[i, j, k], roty: Y[i, j, k], x: X[i, j, k]})
                     V[i, j, k] = wyniky.subs({z: Z[i, j, k], roty: Y[i, j, k], x: X[i, j, k]})
                     W[i, j, k] = wynikz.subs({z: Z[i, j, k], roty: Y[i, j, k], x: X[i, j, k]})
                 except Exception:
-                    U[i, j, k]=0
-                    V[i, j, k]=0
-                    W[i, j, k]=0
+                    U[i, j, k]=np.NaN
+                    V[i, j, k]=np.NaN
+                    W[i, j, k]=np.NaN
                 progressbar.Read(timeout=0)
-                progressbar['progressbar'].UpdateBar(i * 400 + j * 20 + k)
+                progressbar['progressbar'].UpdateBar(i * 21*21 + j * 21 + k)
 
     progressbar.close()
 
@@ -241,20 +264,40 @@ sg.theme('DarkBlue2')
 for i,j in wsp.items():
     wsp[i]=j.replace('y(x)','y')
 
-lista_wykresow = ["Linie prądu","Tor elementu płynu"]
+lista_wykresow = ["Linie prądu","Tor elementu płynu","Dywergencja"]
 
 if(rotacja==1):
     lista_wykresow.append("Rotacja")
 
 wybor_wykresu = [
-    [sg.HSeparator()],
     [sg.Text("Wykresy funkcji: ")],
     [sg.Text("Ux = " + str(wsp[0]))],
     [sg.Text("Uy = " + str(wsp[1]))],
+    [sg.Text("")],
+    [sg.HSeparator()],
+    [sg.Text("")],
+    [sg.Text("Linie prądu: ")],
+    [sg.Text("y = " + str(wynik[0]))],
+    [sg.Text("")],
+    [sg.HSeparator()],
+    [sg.Text("")],
+    [sg.Text("Tor elementu płynu: ")],
+    [sg.Text("y = " + str(wynik[0].subs({C1:1})))],
+    [sg.Text("")],
+    [sg.HSeparator()],
+    [sg.Text("")],
+    [sg.Text("Dywergencja: ")],
+    [sg.Text("div(ux,uy) = " + str(divvar).replace('roty','y'))],
+    [sg.Text("")],
+    [sg.HSeparator()],
+    [sg.Text("")],
+    [sg.Text("Rotacja: ")],
+    [sg.Text("rot(ux,uy,uz) = (" + str(wynikx).replace('roty','y')+", "+ str(wyniky).replace('roty','y')+", "+ str(wynikz).replace('roty','y') + ")")],
+    [sg.Text("")],
     [sg.HSeparator()],
     [sg.Text("")],
     [sg.Text("Dostępne wykresy: ")],
-    [sg.Listbox(values=lista_wykresow, enable_events=True, size=(40, 20), key="-WYKRESY-")]
+    [sg.Listbox(values=lista_wykresow, enable_events=True, size=(40, len(lista_wykresow)),no_scrollbar=True, key="-WYKRESY-")]
 ]
 
 wykres = [
@@ -271,6 +314,8 @@ layout = [
 ]
 
 window = sg.Window('Pole Prędkości', layout, finalize=True,font='Helvetica 18',location=(0, 0),resizable=True)
+
+window.Maximize()
 
 window["-WYKRESY-"].update(set_to_index=0)
 
@@ -291,6 +336,8 @@ while True:
             fig_agg = draw_figure(window['-CANVAS-'].TKCanvas, fig1)
         elif(values['-WYKRESY-'][0]=="Tor elementu płynu"):
             fig_agg = draw_figure(window['-CANVAS-'].TKCanvas, fig2)
+        elif(values['-WYKRESY-'][0]=="Dywergencja"):
+            fig_agg = draw_figure(window['-CANVAS-'].TKCanvas, fig4)
         elif(values['-WYKRESY-'][0]=="Rotacja"):
             fig_agg = draw_figure(window['-CANVAS-'].TKCanvas, fig3)
 
